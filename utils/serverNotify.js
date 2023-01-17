@@ -1,5 +1,4 @@
 const axios = require('axios')
-const serverId = 'SCT192621TQSgwbQtWXOJ26pVYnPUqZZNA'
 function send({ pushKey, title, desp }) {
   return new Promise((resolve, reject) => {
     console.log('server酱开始推送...')
@@ -26,7 +25,7 @@ function send({ pushKey, title, desp }) {
   })
 }
 
-module.exports = function bot(message) {
+module.exports = function bot(message, serverId) {
   if (serverId) {
     send({
       pushKey: serverId, // 企业 ID
