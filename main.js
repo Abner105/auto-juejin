@@ -2,8 +2,7 @@ const JuejinHelper = require('juejin-helper')
 const serverNotify = require('./utils/serverNotify')
 const config = require('./utils/config')
 
-  
-async function run(cookie,serverId) {
+async function run(cookie, serverId) {
   let msg = ''
   try {
     const juejin = new JuejinHelper()
@@ -43,6 +42,13 @@ async function run(cookie,serverId) {
     let gameInfo = null
     let todayDiamond = 0
     let todayLimitDiamond = 1500
+
+    let command = [
+      { times: 10, command: ['D', 'L', '2'] },
+      { times: 10, command: ['D', 'R', '2'] },
+      { times: 10, command: ['D', 'L', '2'] }
+    ]
+
     while (todayDiamond < todayLimitDiamond) {
       const info = await seagold.gameInfo() // 游戏状态
       if (info.gameStatus === 1) {
@@ -50,17 +56,18 @@ async function run(cookie,serverId) {
       } else {
         gameInfo = await seagold.gameStart() // 开始游戏
       }
-      const command = ['U', 'L']
       await seagold.gameCommand(gameInfo.gameId, command) // 执行命令
       const result = await seagold.gameOver() // 游戏结束
       todayDiamond = result.todayDiamond
       todayLimitDiamond = result.todayLimitDiamond
+      if (!todayDiamond) break // 矿石不增加，退出循环
     }
-    msg += '完成海底掘金。\n'
+
+    msg += `完成海底掘金,今日获取矿石${todayDiamond},今日矿石上限${todayLimitDiamond}。\n`
 
     // 获取当前矿石数
     const mine = await growth.getCurrentPoint()
-    msg += `剩余矿石数量${mine}。`
+    msg += `矿石数量总计${mine}。\n`
 
     // 收集bug
     const bugfix = juejin.bugfix()
@@ -77,8 +84,6 @@ async function run(cookie,serverId) {
   serverNotify(msg, serverId)
 }
 
-config.cookies.forEach((cookie,index)=>{
+config.cookies.forEach((cookie, index) => {
   run(cookie, config.serverIds[index])
 })
-
-
