@@ -35,42 +35,36 @@ async function run(cookie, serverId) {
     // 获取我的幸运值
     const luck = await growth.getMyLucky()
     msg += `完成沾喜气，当前幸运值${luck.total_value}。\n`
-  } catch (error) {
-    msg += error
-  }
-  try {
-    // 海底掘金
-    const seagold = juejin.seagold()
-    await seagold.gameLogin() // 登陆游戏
-    let gameInfo = null
-    let todayDiamond = 0
-    let todayLimitDiamond = 1500
 
-    let command = [
-      { times: 10, command: ["D", "L", "2"] },
-      { times: 10, command: ["D", "R", "2"] },
-      { times: 10, command: ["D", "L", "2"] },
-    ]
+    // // 海底掘金
+    // const seagold = juejin.seagold()
+    // await seagold.gameLogin() // 登陆游戏
+    // let gameInfo = null
+    // let todayDiamond = 0
+    // let todayLimitDiamond = 1500
 
-    while (todayDiamond < todayLimitDiamond) {
-      const info = await seagold.gameInfo() // 游戏状态
-      if (info.gameStatus === 1) {
-        gameInfo = info.gameInfo // 继续游戏
-      } else {
-        gameInfo = await seagold.gameStart() // 开始游戏
-      }
-      await seagold.gameCommand(gameInfo.gameId, command) // 执行命令
-      const result = await seagold.gameOver() // 游戏结束
-      todayDiamond = result.todayDiamond
-      todayLimitDiamond = result.todayLimitDiamond
-      if (!todayDiamond) break // 矿石不增加，退出循环
-    }
+    // let command = [
+    //   { times: 10, command: ["D", "L", "2"] },
+    //   { times: 10, command: ["D", "R", "2"] },
+    //   { times: 10, command: ["D", "L", "2"] },
+    // ]
 
-    msg += `完成海底掘金,今日获取矿石${todayDiamond},今日矿石上限${todayLimitDiamond}。\n`
-  } catch (error) {
-    msg += error
-  }
-  try {
+    // while (todayDiamond < todayLimitDiamond) {
+    //   const info = await seagold.gameInfo() // 游戏状态
+    //   if (info.gameStatus === 1) {
+    //     gameInfo = info.gameInfo // 继续游戏
+    //   } else {
+    //     gameInfo = await seagold.gameStart() // 开始游戏
+    //   }
+    //   await seagold.gameCommand(gameInfo.gameId, command) // 执行命令
+    //   const result = await seagold.gameOver() // 游戏结束
+    //   todayDiamond = result.todayDiamond
+    //   todayLimitDiamond = result.todayLimitDiamond
+    //   if (!todayDiamond) break // 矿石不增加，退出循环
+    // }
+
+    // msg += `完成海底掘金,今日获取矿石${todayDiamond},今日矿石上限${todayLimitDiamond}。\n`
+
     // 获取当前矿石数
     const mine = await growth.getCurrentPoint()
     msg += `矿石数量总计${mine}。\n`
