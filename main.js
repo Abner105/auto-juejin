@@ -1,9 +1,9 @@
-const JuejinHelper = require('juejin-helper')
-const serverNotify = require('./utils/serverNotify')
-const config = require('./utils/config')
+const JuejinHelper = require("juejin-helper")
+const serverNotify = require("./utils/serverNotify")
+const config = require("./utils/config")
 
 async function run(cookie, serverId) {
-  let msg = ''
+  let msg = ""
   try {
     const juejin = new JuejinHelper()
     await juejin.login(cookie)
@@ -14,7 +14,7 @@ async function run(cookie, serverId) {
     if (!state) {
       // 签到
       await growth.checkIn()
-      msg = '签到成功。\n'
+      msg = "签到成功。\n"
     }
     // 获取统计签到天数
     const count = await growth.getCounts()
@@ -22,12 +22,12 @@ async function run(cookie, serverId) {
 
     // 抽奖
     await growth.drawLottery()
-    msg += '完成抽奖。\n'
+    msg += "完成抽奖。\n"
 
     // 获取抽奖幸运用户
     const lotteries = await growth.getLotteriesLuckyUsers({
       page_no: 1,
-      page_size: 5
+      page_size: 5,
     }) // => { lotteries: [{ lottery_history_id }, ...] }
     const lottery_history_id = lotteries.lotteries[0].history_id
     // 沾喜气
@@ -35,7 +35,10 @@ async function run(cookie, serverId) {
     // 获取我的幸运值
     const luck = await growth.getMyLucky()
     msg += `完成沾喜气，当前幸运值${luck.total_value}。\n`
-
+  } catch (error) {
+    msg += error
+  }
+  try {
     // 海底掘金
     const seagold = juejin.seagold()
     await seagold.gameLogin() // 登陆游戏
@@ -44,9 +47,9 @@ async function run(cookie, serverId) {
     let todayLimitDiamond = 1500
 
     let command = [
-      { times: 10, command: ['D', 'L', '2'] },
-      { times: 10, command: ['D', 'R', '2'] },
-      { times: 10, command: ['D', 'L', '2'] }
+      { times: 10, command: ["D", "L", "2"] },
+      { times: 10, command: ["D", "R", "2"] },
+      { times: 10, command: ["D", "L", "2"] },
     ]
 
     while (todayDiamond < todayLimitDiamond) {
@@ -64,7 +67,10 @@ async function run(cookie, serverId) {
     }
 
     msg += `完成海底掘金,今日获取矿石${todayDiamond},今日矿石上限${todayLimitDiamond}。\n`
-
+  } catch (error) {
+    msg += error
+  }
+  try {
     // 获取当前矿石数
     const mine = await growth.getCurrentPoint()
     msg += `矿石数量总计${mine}。\n`
